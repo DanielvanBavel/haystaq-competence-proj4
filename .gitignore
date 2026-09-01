@@ -1,0 +1,19 @@
+# Java
+target/
+*.class
+
+# Node
+node_modules/
+dist/
+
+# Playwright
+tests/test-results/
+tests/playwright-report/
+tests/package-lock.json
+
+# Tooling
+.env
+*.log
+.idea/
+.vscode/
+.DS_Store

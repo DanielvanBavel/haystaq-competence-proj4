@@ -1,0 +1,16 @@
+{
+  "name": "huisjacht-tests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "De bestaande UI-testsuite van HuisJacht. Werkt prima. Tot de volgende release.",
+  "scripts": {
+    "test": "playwright test",
+    "test:brittle": "playwright test specs/brittle",
+    "test:flaky": "playwright test specs/flaky",
+    "test:repeat": "playwright test --repeat-each=5",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.49.1"
+  }
+}

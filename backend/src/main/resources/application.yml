@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: huisjacht
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:huisjacht}
+    username: ${DB_USER:huisjacht}
+    password: ${DB_PASSWORD:huisjacht}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    clean-disabled: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+huisjacht:
+  ui-drift:
+    # Elke 15 minuten rolt er een nieuwe UI-revisie uit. Dat is het probleem
+    # waar deze opdracht over gaat; zet op false als je even rust wilt.
+    enabled: ${UI_DRIFT_ENABLED:true}
+    interval-minutes: ${UI_DRIFT_INTERVAL_MINUTES:15}
+    start-revision: ${UI_START_REVISION:1}
+  flakiness:
+    # Wisselende responstijden op zoeken en media.
+    enabled: ${FLAKINESS_ENABLED:true}
+    min-latency-ms: ${FLAKINESS_MIN_MS:40}
+    max-latency-ms: ${FLAKINESS_MAX_MS:1800}
+
+logging:
+  level:
+    root: INFO
+    nl.haystaq: INFO

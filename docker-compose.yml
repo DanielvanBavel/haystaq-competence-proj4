@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: huisjacht
+      POSTGRES_PASSWORD: huisjacht
+      POSTGRES_DB: huisjacht
+    ports:
+      - "${DB_PORT:-5436}:5432"
+    volumes:
+      - huisjacht-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U huisjacht" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ./backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: huisjacht
+      DB_USER: huisjacht
+      DB_PASSWORD: huisjacht
+      UI_DRIFT_ENABLED: "${UI_DRIFT_ENABLED:-true}"
+      UI_DRIFT_INTERVAL_MINUTES: "${UI_DRIFT_INTERVAL_MINUTES:-15}"
+      UI_START_REVISION: "${UI_START_REVISION:-1}"
+      FLAKINESS_ENABLED: "${FLAKINESS_ENABLED:-true}"
+      FLAKINESS_MIN_MS: "${FLAKINESS_MIN_MS:-40}"
+      FLAKINESS_MAX_MS: "${FLAKINESS_MAX_MS:-1800}"
+    ports:
+      - "${API_PORT:-8084}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q -O - http://localhost:8080/actuator/health | grep -q UP" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "${FRONTEND_PORT:-3004}:80"
+    depends_on:
+      - api
+
+volumes:
+  huisjacht-data:
